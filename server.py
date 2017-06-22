@@ -11,10 +11,12 @@ Send a POST request::
 """
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
+# from Tkinter import Text, END
 
 class S(BaseHTTPRequestHandler):
 
     filepath = "/Users/hakonhukkelas/programmering/ntnu/test.json"
+    # to_print_to = Text()
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -25,6 +27,7 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
         self.wfile.write("<html><body>%s</body></html>" % "".join(f.readlines()))
         f.close()
+        # S.to_print_to.insert(END,"GET from: %s \n" % self.client_address[0])
 
     def do_HEAD(self):
         self._set_headers()
@@ -38,15 +41,22 @@ class S(BaseHTTPRequestHandler):
         f.close()
         self._set_headers()
         self.wfile.write("<html><body><h1>POST!</h1></body></html>")
-        
-def run(server_class=HTTPServer, handler_class=S, port=80):
-    port = 8888
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    print 'Starting httpd...'
-    httpd.serve_forever()
+
+
+class Server:
+
+    def start(self, server_class=HTTPServer, handler_class=S, port=80):
+        port = 8888
+        server_address = ('', port)
+        self.httpd = server_class(server_address, handler_class)
+        self.httpd.serve_forever()
+        print 'Starting httpd...'
+    
+    def stop(self):
+        self.httpd.server_close()
 
 if __name__ == "__main__":
-  run(port=8888)
+  s = Server()
+  s.start()
 
 
